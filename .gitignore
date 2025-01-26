@@ -1,2 +1,5 @@
 sql.py
 .env
+
+
+__pycache__/
