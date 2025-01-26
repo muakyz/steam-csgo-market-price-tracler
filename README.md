@@ -2,8 +2,7 @@ Steam CS2 Item Scraper
 
 Overview
 --------
-Steam Item Scraper is a Python-based tool designed to automatically scrape item details from the Steam Store. 
-It collects essential data such as item prices, statistics, and other relevant information, then stores the data either in a SQL database or a JSON file based on your configuration.
+Steam Item Scraper is a Python-based tool designed to automatically scrape item details from the Steam Store. It collects essential data such as item prices, statistics, and other relevant information, including fields like item_title, exterior, item_StatTrak, item_price, item_price_afterfee, item_order_price, last_sold_price, last_sold_price_avg, item_profit, price_stability, and item_profit_percentage. The tool then stores the data either in a SQL database or a JSON file based on your configuration.
 
 Features
 --------
