@@ -37,5 +37,57 @@
         "item_profit": 16.73,
         "price_stability": 89.87,
         "item_profit_percentage": 5.17
+    },
+    {
+        "item_title": "★ Bayonet | Fade (Factory New)",
+        "exterior": "Factory New",
+        "item_StatTrak": 0,
+        "item_price": 1003.07,
+        "item_price_afterfee": 872.24,
+        "item_order_price": 872.0,
+        "last_sold_price": 875.3,
+        "last_sold_price_avg": 972.7,
+        "item_profit": 0.24,
+        "price_stability": 96.97,
+        "item_profit_percentage": 0.02
+    },
+    {
+        "item_title": "★ StatTrak™ Paracord Knife | Crimson Web (Battle-Scarred)",
+        "exterior": "Battle-Scarred",
+        "item_StatTrak": 1,
+        "item_price": 341.37,
+        "item_price_afterfee": 296.85,
+        "item_order_price": 179.07,
+        "last_sold_price": 373.29,
+        "last_sold_price_avg": 240.66,
+        "item_profit": 117.78,
+        "price_stability": 70.5,
+        "item_profit_percentage": 34.5
+    },
+    {
+        "item_title": "★ Shadow Daggers | Doppler (Factory New)",
+        "exterior": "Factory New",
+        "item_StatTrak": 0,
+        "item_price": 259.99,
+        "item_price_afterfee": 226.09,
+        "item_order_price": 244.27,
+        "last_sold_price": 259.98,
+        "last_sold_price_avg": 283.24,
+        "item_profit": -18.18,
+        "price_stability": 108.94,
+        "item_profit_percentage": -6.99
+    },
+    {
+        "item_title": "★ Gut Knife | Doppler (Factory New)",
+        "exterior": "Factory New",
+        "item_StatTrak": 0,
+        "item_price": 269.71,
+        "item_price_afterfee": 234.54,
+        "item_order_price": 225.28,
+        "last_sold_price": 259.33,
+        "last_sold_price_avg": 252.9,
+        "item_profit": 9.26,
+        "price_stability": 93.77,
+        "item_profit_percentage": 3.43
     }
 ]

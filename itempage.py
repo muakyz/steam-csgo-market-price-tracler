@@ -14,12 +14,18 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 import re
+import configparser
 import itertools
 import sys
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 load_dotenv()
+
 def get_connection():
+    if not should_write_to_database():
+        return None
+    
     server = os.getenv('DB_SERVER')
     database = os.getenv('DB_DATABASE') 
     driver = os.getenv('DB_DRIVER', 'ODBC Driver 17 for SQL Server')
@@ -170,11 +176,20 @@ def update_database(conn, item):
         logging.error(f"SQL hatası için '{item_title}': {e}")
     conn.commit()
 
+
+
+def should_write_to_database():
+    config = configparser.ConfigParser()
+    config.read('config.conf')
+    return config.getboolean('database', 'write_to_database', fallback=False)
+
+
 def scrape_and_update(item_link, driver, item_data, conn):
     try:
         logging.info(f"Scraping başlıyor: {item_link}")
         driver.get(item_link)
         WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CLASS_NAME, "market_commodity_orders_header_promote")))
+
         html_content = driver.page_source
         soup = BeautifulSoup(html_content, "html.parser")
         title_tag = soup.find("title")
@@ -222,6 +237,7 @@ def scrape_and_update(item_link, driver, item_data, conn):
                 "price_stability": price_stability,
                 "item_profit_percentage": item_profit_percentage
             }
+            
             updated = False
             for index, existing_item in enumerate(item_data):
                 if isinstance(existing_item, dict) and existing_item.get("item_title") == item_title:
@@ -230,12 +246,19 @@ def scrape_and_update(item_link, driver, item_data, conn):
                     break
             if not updated:
                 item_data.append(new_item)
-            with open("item_data.json", "w", encoding="utf-8") as json_file:
-                json.dump(item_data, json_file, indent=4, ensure_ascii=False)
-            logging.info(f"Scraping tamamlandı: {item_link}")
-            update_database(conn, new_item)
+
+            if should_write_to_database():
+                update_database(conn, new_item)
+                logging.info(f"Veritabanına yazıldı: {item_title}")
+            else:
+                with open("item_data.json", "w", encoding="utf-8") as json_file:
+                    json.dump(item_data, json_file, indent=4, ensure_ascii=False)
+                logging.info(f"Veritabanı dosyası bulunamadı. JSON dosyasına yazıldı: {item_title}")
+                
+        logging.info(f"Scraping tamamlandı: {item_link}")
     except Exception as e:
         logging.error(f"Error occurred while scraping {item_link}: {str(e)}")
+
 
 username = os.getenv("steam_username")
 password = os.getenv("steam_password")
