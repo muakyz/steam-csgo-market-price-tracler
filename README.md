@@ -1,4 +1,4 @@
-Steam Item Scraper
+Steam CS2 Item Scraper
 
 Overview
 --------
