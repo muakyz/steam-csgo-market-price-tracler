@@ -22,6 +22,11 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 load_dotenv()
 
+def should_write_to_database():
+    config = configparser.ConfigParser()
+    config.read('config.conf')
+    return config.getboolean('database', 'write_to_database', fallback=False)
+
 def get_connection():
     if not should_write_to_database():
         return None
@@ -40,17 +45,17 @@ def get_connection():
     )
     try:
         conn = pyodbc.connect(connection_string)
-        logging.info("Veritabanına başarıyla bağlanıldı.")
+        logging.info("Connected to DB.")
         return conn
     except pyodbc.Error as e:
-        logging.error(f"Veritabanı bağlantı hatası: {e}")
+        logging.error(f"DB Connection error: {e}")
         raise
 
 def update_database(conn, item):
     cursor = conn.cursor()
     item_title = item.get('item_title')
     if not item_title:
-        logging.warning("item_title eksik olan bir öğe atlanıyor.")
+        logging.warning("item_title is missing.")
         return
     logging.info(f"İşleniyor: {item_title}")
     exterior = item.get('exterior')
@@ -67,48 +72,49 @@ def update_database(conn, item):
     try:
         item_StatTrak = int(item_StatTrak)
     except ValueError:
-        logging.error(f"Veri tipi dönüşüm hatası için '{item_title}': 'item_StatTrak' geçersiz, 0 olarak ayarlandı.")
+        logging.error(f"Data type conversion error for '{item_title}': 'item_StatTrak' is invalid, set to 0.")
         item_StatTrak = 0
     try:
         item_price = float(item_price)
     except ValueError:
-        logging.error(f"Veri tipi dönüşüm hatası için '{item_title}': 'item_price' geçersiz, 0.0 olarak ayarlandı.")
+        logging.error(f"Data type conversion error for '{item_title}': 'item_price' is invalid, set to 0.0.")
         item_price = 0.0
     try:
         item_price_afterfee = float(item_price_afterfee)
     except ValueError:
-        logging.error(f"Veri tipi dönüşüm hatası için '{item_title}': 'item_price_afterfee' geçersiz, 0.0 olarak ayarlandı.")
+        logging.error(f"Data type conversion error for '{item_title}': 'item_price_afterfee' is invalid, set to 0.0.")
         item_price_afterfee = 0.0
     try:
         item_order_price = float(item_order_price)
     except ValueError:
-        logging.error(f"Veri tipi dönüşüm hatası için '{item_title}': 'item_order_price' geçersiz, 0.0 olarak ayarlandı.")
+        logging.error(f"Data type conversion error for '{item_title}': 'item_order_price' is invalid, set to 0.0.")
         item_order_price = 0.0
     try:
         last_sold_price = float(last_sold_price)
     except ValueError:
-        logging.error(f"Veri tipi dönüşüm hatası için '{item_title}': 'last_sold_price' geçersiz, 0.0 olarak ayarlandı.")
+        logging.error(f"Data type conversion error for '{item_title}': 'last_sold_price' is invalid, set to 0.0.")
         last_sold_price = 0.0
     try:
         last_sold_price_avg = float(last_sold_price_avg)
     except ValueError:
-        logging.error(f"Veri tipi dönüşüm hatası için '{item_title}': 'last_sold_price_avg' geçersiz, 0.0 olarak ayarlandı.")
+        logging.error(f"Data type conversion error for '{item_title}': 'last_sold_price_avg' is invalid, set to 0.0.")
         last_sold_price_avg = 0.0
     try:
         item_profit = float(item_profit)
     except ValueError:
-        logging.error(f"Veri tipi dönüşüm hatası için '{item_title}': 'item_profit' geçersiz, 0.0 olarak ayarlandı.")
+        logging.error(f"Data type conversion error for '{item_title}': 'item_profit' is invalid, set to 0.0.")
         item_profit = 0.0
     try:
         price_stability = float(price_stability)
     except ValueError:
-        logging.error(f"Veri tipi dönüşüm hatası için '{item_title}': 'price_stability' geçersiz, 0.0 olarak ayarlandı.")
+        logging.error(f"Data type conversion error for '{item_title}': 'price_stability' is invalid, set to 0.0.")
         price_stability = 0.0
     try:
         item_profit_percentage = float(item_profit_percentage)
     except ValueError:
-        logging.error(f"Veri tipi dönüşüm hatası için '{item_title}': 'item_profit_percentage' geçersiz, 0.0 olarak ayarlandı.")
+        logging.error(f"Data type conversion error for '{item_title}': 'item_profit_percentage' is invalid, set to 0.0.")
         item_profit_percentage = 0.0
+
 
     update_sql = """
     UPDATE dbo.items SET
@@ -169,19 +175,12 @@ def update_database(conn, item):
                 price_stability,
                 item_profit_percentage
             ))
-            logging.info(f"Yeni öğe eklendi: {item_title}")
+            logging.info(f"New item added: {item_title}")
         else:
-            logging.info(f"Öğe güncellendi: {item_title}")
+            logging.info(f"Item updated: {item_title}")
     except pyodbc.Error as e:
-        logging.error(f"SQL hatası için '{item_title}': {e}")
+        logging.error(f"SQL error for '{item_title}': {e}")
     conn.commit()
-
-
-
-def should_write_to_database():
-    config = configparser.ConfigParser()
-    config.read('config.conf')
-    return config.getboolean('database', 'write_to_database', fallback=False)
 
 
 def scrape_and_update(item_link, driver, item_data, conn):
@@ -249,19 +248,20 @@ def scrape_and_update(item_link, driver, item_data, conn):
 
             if should_write_to_database():
                 update_database(conn, new_item)
-                logging.info(f"Veritabanına yazıldı: {item_title}")
+                logging.info(f"Writed to DB: {item_title}")
             else:
                 with open("item_data.json", "w", encoding="utf-8") as json_file:
                     json.dump(item_data, json_file, indent=4, ensure_ascii=False)
-                logging.info(f"Veritabanı dosyası bulunamadı. JSON dosyasına yazıldı: {item_title}")
+                logging.info(f"Writed to JSON: {item_title}")
                 
         logging.info(f"Scraping tamamlandı: {item_link}")
     except Exception as e:
         logging.error(f"Error occurred while scraping {item_link}: {str(e)}")
 
 
-username = os.getenv("steam_username")
-password = os.getenv("steam_password")
+st_username = os.getenv("steam_username")
+st_password = os.getenv("steam_password")
+st_profile_name = os.getenv("steam_profile_name")
 def main():
     try:
         conn = get_connection()
@@ -269,21 +269,21 @@ def main():
         driver.get("https://store.steampowered.com/login/")
         wait = WebDriverWait(driver, 10)
         username_field = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "input[type='text']._2GBWeup5cttgbTw8FM3tfx")))
-        username_field.send_keys(username)
+        username_field.send_keys(st_username)
         password_field = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "input[type='password']._2GBWeup5cttgbTw8FM3tfx")))
-        password_field.send_keys(password)
+        password_field.send_keys(st_password)
         password_field.send_keys(Keys.RETURN)
         try:
             account_pulldown = wait.until(EC.presence_of_element_located((By.ID, "account_pulldown")))
-            if account_pulldown.text.strip() == "2079python":
-                logging.info("Başarıyla giriş yapıldı.")
+            if account_pulldown.text.strip() == st_profile_name:
+                logging.info("Succesfuly logged in.")
             else:
-                logging.error("Giriş başarısız. Hesap bilgileri uyuşmuyor.")
+                logging.error("Error during login process.")
                 driver.quit()
                 conn.close()
                 sys.exit(1)
         except Exception as e:
-            logging.error(f"Giriş sırasında hata: {e}")
+            logging.error(f"Error during login: {e}")
             driver.quit()
             conn.close()
             sys.exit(1)
@@ -291,7 +291,7 @@ def main():
             items = json.load(json_file)
         item_links = [item["item_link"] for item in items if "item_link" in item]
         if not item_links:
-            logging.error("item_details.json dosyasında geçerli link bulunamadı.")
+            logging.error("item_details.json doesn't include item links.")
             driver.quit()
             conn.close()
             sys.exit(1)
@@ -305,13 +305,13 @@ def main():
         for item_link in itertools.cycle(item_links):
             scrape_and_update(item_link, driver, item_data, conn)
     except KeyboardInterrupt:
-        logging.info("Kullanıcı tarafından durduruldu.")
+        logging.info("Process stopped by user.")
     except Exception as e:
         logging.error(f"Genel hata: {e}")
     finally:
         driver.quit()
         conn.close()
-        logging.info("Betiğin çalışması durduruldu.")
+        logging.info("Process stopped.")
 
 if __name__ == "__main__":
     main()
