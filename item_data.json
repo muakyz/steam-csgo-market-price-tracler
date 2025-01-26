@@ -1,0 +1,41 @@
+[
+    {
+        "item_title": "★ Flip Knife | Autotronic (Minimal Wear)",
+        "exterior": "Minimal Wear",
+        "item_StatTrak": 0,
+        "item_price": 512.0,
+        "item_price_afterfee": 445.22,
+        "item_order_price": 402.18,
+        "last_sold_price": 493.61,
+        "last_sold_price_avg": 451.81,
+        "item_profit": 43.04,
+        "price_stability": 88.24,
+        "item_profit_percentage": 8.41
+    },
+    {
+        "item_title": "★ Shadow Daggers | Gamma Doppler (Factory New)",
+        "exterior": "Factory New",
+        "item_StatTrak": 0,
+        "item_price": 236.99,
+        "item_price_afterfee": 206.09,
+        "item_order_price": 211.61,
+        "last_sold_price": 235.83,
+        "last_sold_price_avg": 243.79,
+        "item_profit": -5.52,
+        "price_stability": 102.87,
+        "item_profit_percentage": -2.33
+    },
+    {
+        "item_title": "★ Flip Knife | Case Hardened (Well-Worn)",
+        "exterior": "Well-Worn",
+        "item_StatTrak": 0,
+        "item_price": 323.49,
+        "item_price_afterfee": 281.3,
+        "item_order_price": 264.57,
+        "last_sold_price": 279.41,
+        "last_sold_price_avg": 290.72,
+        "item_profit": 16.73,
+        "price_stability": 89.87,
+        "item_profit_percentage": 5.17
+    }
+]
