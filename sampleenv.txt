@@ -1,0 +1,10 @@
+DB_SERVER=ip,port
+DB_DATABASE=dbname, if you dont have one, there is an sql query for creating it in .conf
+DB_DRIVER=ODBC Driver 17 for SQL Server
+DB_USERNAME=mami
+DB_PASSWORD=paswd
+
+
+steam_username = abcd
+steam_password = 1234
+steam_profile_name = top right, #for login verification
